@@ -11,7 +11,7 @@ import { UserContext } from "../../contexts/UserContext";
 
 const Header = () => {
   const { setIsOpen } = useContext(CartContext);
-  const { userLoggout } = useContext(UserContext);
+  const { userLogout } = useContext(UserContext);
 
   return (
     <StyledHeader>
@@ -33,7 +33,7 @@ const Header = () => {
               >
                 <MdShoppingCart size={28} />
               </button>
-              <button type="button" onClick={userLoggout}>
+              <button type="button" onClick={userLogout}>
                 <MdLogout size={28} />
               </button>
             </div>

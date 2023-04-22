@@ -17,7 +17,7 @@ interface IUserContext {
   userLogin: (data: TLoginFormValues) => void;
   userAutoLogin: (token: string, userId: string) => Promise<void>;
   userRegister: (data: TRegisterFormValues) => void;
-  userLoggout: () => void;
+  userLogout: () => void;
   user: {} | IResponse;
   setUser: React.Dispatch<React.SetStateAction<{} | IResponse>>;
 }
@@ -96,7 +96,7 @@ export const UserProvider = ({ children }: IUserProviderProps) => {
     }
   };
 
-  const userLoggout = () => {
+  const userLogout = () => {
     localStorage.removeItem("@TOKEN-hamburgueria");
     localStorage.removeItem("@USERID-hamburgueria");
     navigate("/");
@@ -108,7 +108,7 @@ export const UserProvider = ({ children }: IUserProviderProps) => {
         userLogin,
         userAutoLogin,
         userRegister,
-        userLoggout,
+        userLogout,
         user,
         setUser,
       }}
