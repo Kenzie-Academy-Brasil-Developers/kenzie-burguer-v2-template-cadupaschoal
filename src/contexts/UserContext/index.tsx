@@ -5,6 +5,7 @@ import { SubmitHandler } from "react-hook-form";
 import { TLoginFormValues } from "../../components/Form/LoginForm/schema";
 import { TRegisterFormValues } from "../../components/Form/RegisterForm/schema";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export const UserContext = createContext({} as IUserContext);
 
@@ -20,6 +21,8 @@ interface IUserContext {
   userLogout: () => void;
   user: {} | IResponse;
   setUser: React.Dispatch<React.SetStateAction<{} | IResponse>>;
+  loading: boolean;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 //Response
@@ -51,32 +54,44 @@ interface ILogin {
 
 export const UserProvider = ({ children }: IUserProviderProps) => {
   const [user, setUser] = useState<IResponse | {}>({});
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const userRegister: SubmitHandler<TRegisterFormValues> = async (
     data: IRegister
   ) => {
     try {
+      setLoading(true);
       const response = await api.post<IResponse>("/users", data);
-      console.log(response.data);
+      toast.success("Conta criada com sucesso");
       setTimeout(() => {
         navigate("/");
       }, 2300);
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      if (error.response.data === "Email already exists") {
+        toast.error("Este e-mail já está vinculado a uma conta");
+      } else {
+        toast.error(
+          "Algo deu errado, verifique as informações e tente novamente"
+        );
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
   const userLogin: SubmitHandler<TLoginFormValues> = async (data: ILogin) => {
     try {
+      setLoading(true);
       const response = await api.post<IResponse>("/login", data);
-      console.log(response.data);
       setUser(response.data);
       localStorage.setItem("@TOKEN-hamburgueria", response.data.accessToken);
       localStorage.setItem("@USERID-hamburgueria", response.data.user.id);
-      navigate("/shop"); // -> criar toast de sucesso
+      navigate("/shop");
     } catch (error) {
-      console.log(error); // -> criar toast de erro
+      toast.error("Senha ou e-mail incorretos");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -87,13 +102,10 @@ export const UserProvider = ({ children }: IUserProviderProps) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response);
       if (response.status === 200) {
         navigate("/shop");
       }
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   const userLogout = () => {
@@ -111,6 +123,8 @@ export const UserProvider = ({ children }: IUserProviderProps) => {
         userLogout,
         user,
         setUser,
+        loading,
+        setLoading,
       }}
     >
       {children}

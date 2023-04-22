@@ -9,7 +9,7 @@ import { useContext } from "react";
 import { UserContext } from "../../../contexts/UserContext";
 
 const RegisterForm = () => {
-  const { userRegister } = useContext(UserContext);
+  const { userRegister, loading } = useContext(UserContext);
   const {
     register,
     handleSubmit,
@@ -48,8 +48,13 @@ const RegisterForm = () => {
         label="Confirmar senha"
         error={errors.confirmPassword}
       />
-      <StyledButton $buttonSize="default" $buttonStyle="gray" type="submit">
-        Cadastrar
+      <StyledButton
+        $buttonSize="default"
+        $buttonStyle="gray"
+        type="submit"
+        disabled={loading}
+      >
+        {loading ? <p>Cadastrando...</p> : <p>Cadastrar</p>}
       </StyledButton>
     </StyledForm>
   );

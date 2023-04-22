@@ -13,7 +13,6 @@ const CartProductList = () => {
     style: "currency",
     currency: "BRL",
   });
-  console.log(cartTotal);
   return (
     <StyledCartProductList>
       <ul>

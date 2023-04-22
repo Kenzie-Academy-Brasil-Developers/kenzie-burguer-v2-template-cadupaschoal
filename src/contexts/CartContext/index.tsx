@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import { api } from "../../api/api";
+import { toast } from "react-toastify";
 
 export const CartContext = createContext({} as ICartContext);
 
@@ -38,7 +39,6 @@ export const CartProvider = ({ children }: ICartContextProps) => {
   const [cartList, setCartList] = useState<any>([]);
   const [cartTotal, setCartTotal] = useState<number>(0);
   const [searchInput, setSearchInput] = useState<string>("");
-
   useEffect(() => {
     const token = localStorage.getItem("@TOKEN-hamburgueria");
     const loadProducts = async () => {
@@ -48,10 +48,9 @@ export const CartProvider = ({ children }: ICartContextProps) => {
             Authorization: `Bearer ${token}`,
           },
         });
-        //console.log(response.data); // -> Fazer tost
         setListProducts(response.data);
       } catch (error) {
-        console.log(error); // -> Fazer tost
+        toast.error("Não foi possível carregar os produtos");
       }
     };
 
@@ -59,11 +58,18 @@ export const CartProvider = ({ children }: ICartContextProps) => {
   }, []);
 
   const addToCart = (productId: number) => {
-    const newCartProduct = listProducts.find(
-      (product) => product.id === productId
+    const alreadyBuyed = cartList.find(
+      (product: ILoadProducts) => product.id === productId
     );
-    setCartList([newCartProduct, ...cartList]);
-    console.log(cartList);
+    if (!alreadyBuyed) {
+      const newCartProduct = listProducts.find(
+        (product) => product.id === productId
+      );
+      setCartList([newCartProduct, ...cartList]);
+      toast.success("Produto adicionado ao carrinho");
+    } else {
+      toast.warn("Este produto já se encontra no carrinho de compras");
+    }
   };
 
   const removeToCart = (productId: number) => {
@@ -71,13 +77,13 @@ export const CartProvider = ({ children }: ICartContextProps) => {
       (product: ILoadProducts) => product.id !== productId
     );
     setCartList(newList);
+    toast.success("Produto removido do carrinho");
   };
 
   const removeAll = () => {
     setCartList([]);
-    console.log(cartList);
+    toast.success("Todos os produtos foram removidos do carrinho");
   };
-  console.log(cartTotal);
 
   useEffect(() => {
     const totalPrice = () => {
@@ -93,7 +99,6 @@ export const CartProvider = ({ children }: ICartContextProps) => {
 
       setCartTotal(finalBalance);
     };
-    console.log(cartList);
     totalPrice();
   }, [cartList]);
 
@@ -128,7 +133,7 @@ export const CartProvider = ({ children }: ICartContextProps) => {
     });
 
     if (newList.length === 0) {
-      console.log("Nenhum item correspondente a pesquisa");
+      toast.info("Nenhum item correspondente a pesquisa");
     } else {
       setListProducts(newList);
     }

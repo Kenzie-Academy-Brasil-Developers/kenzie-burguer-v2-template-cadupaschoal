@@ -10,7 +10,7 @@ import { UserContext } from "../../../contexts/UserContext";
 import { useContext } from "react";
 
 const LoginForm = () => {
-  const { userLogin } = useContext(UserContext);
+  const { userLogin, loading } = useContext(UserContext);
   const {
     register,
     handleSubmit,
@@ -35,8 +35,13 @@ const LoginForm = () => {
         {...register("password")}
         error={errors.password}
       />
-      <StyledButton $buttonSize="default" $buttonStyle="green" type="submit">
-        Entrar
+      <StyledButton
+        $buttonSize="default"
+        $buttonStyle="green"
+        type="submit"
+        disabled={loading}
+      >
+        {loading ? <p>Entrando...</p> : <p>Entrar</p>}
       </StyledButton>
     </StyledForm>
   );

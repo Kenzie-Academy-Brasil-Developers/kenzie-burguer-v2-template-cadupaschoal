@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ShopPage from "./pages/ShopPage";
+import NotFound from "./pages/NotFound";
 import { CartProvider } from "./contexts/CartContext";
 
 const Router = () => {
@@ -17,6 +18,7 @@ const Router = () => {
           </CartProvider>
         }
       />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };
