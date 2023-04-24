@@ -50,7 +50,9 @@ export const CartProvider = ({ children }: ICartContextProps) => {
         });
         setListProducts(response.data);
       } catch (error) {
-        toast.error("Não foi possível carregar os produtos");
+        if (token) {
+          toast.error("Não foi possível carregar os produtos");
+        }
       }
     };
 
